@@ -1,0 +1,8 @@
+{
+    "name": "Bob Jones",
+    "age": 35,
+    "dept": "CS",
+    "rating": 4.0,
+    "tenure": true,
+    "courses": null
+}

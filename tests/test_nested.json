@@ -1,0 +1,11 @@
+{
+    "name": "Bob Jones",
+    "age": 35,
+    "dept": "CS",
+    "tenure": true,
+    "courses": [
+        "CS 322",
+        "CS 337",
+        "CS 338"
+    ]
+}
