@@ -1,0 +1,22 @@
+name: Main Testing
+run-name: Run testing for ${{github.actor}}
+
+on:
+    push:
+        branches:
+            - "main"
+        paths-ignore:
+            - "tests"
+
+# Test build: must compile and unit tests must pass
+jobs:
+    build-job:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup Build
+              run: cmake -S . -DDEBUG_MODE=0
+            - name: Build Code
+              run: make -j 2 all
+            - name: Sample Test
+              run: ./bin/toyjson

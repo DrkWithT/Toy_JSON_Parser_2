@@ -1,0 +1,18 @@
+# Ignore misc. & build dirs
+.DS_Store
+.cache
+.git
+.vscode
+CMakeFiles
+bin
+build
+
+# Ignore build files
+*.a
+*.cmake
+*.o
+
+# Ignore tool files
+CMakeCache.txt
+Makefile
+compile_commands.json
