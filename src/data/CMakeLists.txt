@@ -1,3 +1,3 @@
 add_library(data)
 
-target_sources(data PRIVATE ToyJSONUtils.cpp PRIVATE ToyJsonValue.cpp)
+target_sources(data PRIVATE Value.cpp)
