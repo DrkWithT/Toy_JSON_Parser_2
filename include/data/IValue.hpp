@@ -11,7 +11,8 @@ namespace toyjson::data {
         j_number,
         j_string,
         j_array,
-        j_object
+        j_object,
+        j_any
     };
 
     class IJsonValue {

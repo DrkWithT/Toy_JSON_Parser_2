@@ -3,6 +3,7 @@
 
 #include <any>
 #include <map>
+#include <variant>
 #include <vector>
 #include <string_view>
 #include <string>
@@ -91,6 +92,53 @@ namespace toyjson::data {
             std::map<std::string, std::unique_ptr<IJsonValue>> value;
     };
 
+    /* Type Utils */
+
+    // Base case: all unsupported native types default to 0 as null.
+    template <typename T>
+    constexpr int native_to_vidx = 0;
+
+    template <>
+    static constexpr int native_to_vidx<BooleanField> = 1;
+
+    template <>
+    static constexpr int native_to_vidx<NumberField> = 2;
+
+    template <>
+    static constexpr int native_to_vidx<StringField> = 3;
+
+    template <>
+    static constexpr int native_to_vidx<ArrayField> = 4;
+
+    template <>
+    static constexpr int native_to_vidx<ObjectField> = 5;
+
+    /* AnyField (wraps any JSON type)*/
+
+    class AnyField : public IJsonValue {
+        public:
+            AnyField() = delete;
+            AnyField(NullField x_null);
+            AnyField(BooleanField x_boolean);
+            AnyField(NumberField x_number);
+            AnyField(StringField x_string);
+            AnyField(ArrayField x_array);
+            AnyField(ObjectField x_object);
+
+            [[nodiscard]] JsonType getType() const override;
+            [[nodiscard]] std::any toBoxedValue() const override;
+
+            template <typename Ntv>
+            constexpr const Ntv& unpackValue()
+            {
+                constexpr int variant_pos = native_to_vidx<Ntv>;
+
+                return std::get<variant_pos>(value);
+            }
+        private:
+            std::variant<NullField, BooleanField, NumberField, StringField, ArrayField, ObjectField> value;
+    };
+
     class ToyJsonDocument {
         public:
             ToyJsonDocument();
@@ -101,6 +149,8 @@ namespace toyjson::data {
 
         private:
             std::string title;
+
+            /// @warning Only store AnyField objects or else there's no guarantee of the IJsonValue having a desired value within.
             std::unique_ptr<IJsonValue> root_ptr;
     };
 }
