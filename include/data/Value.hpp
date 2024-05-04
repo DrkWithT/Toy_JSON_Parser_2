@@ -7,6 +7,7 @@
 #include <vector>
 #include <string_view>
 #include <string>
+#include <type_traits>
 #include <memory>
 #include "data/IValue.hpp"
 
@@ -92,26 +93,28 @@ namespace toyjson::data {
             std::map<std::string, std::unique_ptr<IJsonValue>> value;
     };
 
-    /* Type Utils */
+    /* Type Utility */
 
     // Base case: all unsupported native types default to 0 as null.
     template <typename T>
-    static constexpr int native_to_vidx = 0;
+    constexpr int toAnyVariantPos() {
+        if constexpr (std::is_same_v<T, BooleanField>)
+            return 1;
 
-    template <>
-    static constexpr int native_to_vidx<BooleanField> = 1;
+        if constexpr (std::is_same_v<T, NumberField>)
+            return 2;
 
-    template <>
-    static constexpr int native_to_vidx<NumberField> = 2;
+        if constexpr (std::is_same_v<T, StringField>)
+            return 3;
 
-    template <>
-    static constexpr int native_to_vidx<StringField> = 3;
+        if constexpr (std::is_same_v<T, ArrayField>)
+            return 4;
 
-    template <>
-    static constexpr int native_to_vidx<ArrayField> = 4;
+        if constexpr (std::is_same_v<T, ObjectField>)
+            return 5;
 
-    template <>
-    static constexpr int native_to_vidx<ObjectField> = 5;
+        return 0;
+    }
 
     /* AnyField (wraps any JSON type)*/
 
@@ -131,7 +134,7 @@ namespace toyjson::data {
             template <typename Ntv>
             constexpr const Ntv& unpackValue()
             {
-                constexpr int variant_pos = native_to_vidx<Ntv>;
+                constexpr int variant_pos = toAnyVariantPos<Ntv>();
 
                 return std::get<variant_pos>(value);
             }
