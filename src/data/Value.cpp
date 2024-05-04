@@ -120,6 +120,52 @@ namespace toyjson::data {
         return value.at(key);
     }
 
+    /* Type Utils */
+
+    template <>
+    constexpr int native_to_vidx<BooleanField> = 1;
+
+    template <>
+    constexpr int native_to_vidx<NumberField> = 2;
+
+    template <>
+    constexpr int native_to_vidx<StringField> = 3;
+
+    template <>
+    constexpr int native_to_vidx<ArrayField> = 4;
+
+    template <>
+    constexpr int native_to_vidx<ObjectField> = 5;
+
+    /* AnyField */
+    AnyField::AnyField(NullField x_null)
+        : value(std::move(x_null)) {}
+
+    AnyField::AnyField(BooleanField x_boolean)
+        : value(std::move(x_boolean)) {}
+
+    AnyField::AnyField(NumberField x_number)
+        : value(std::move(x_number)) {}
+
+    AnyField::AnyField(StringField x_string)
+        : value(std::move(x_string)) {}
+
+    AnyField::AnyField(ArrayField x_array)
+        : value(std::move(x_array)) {}
+
+    AnyField::AnyField(ObjectField x_object)
+        : value(std::move(x_object)) {}
+
+    JsonType AnyField::getType() const
+    {
+        return JsonType::j_any;
+    }
+
+    std::any AnyField::toBoxedValue() const
+    {
+        throw std::runtime_error {"Not implemented"};
+    }
+
     /* ToyJsonDocument */
 
     ToyJsonDocument::ToyJsonDocument(const std::string& name_str, std::unique_ptr<IJsonValue> x_root_ptr)
