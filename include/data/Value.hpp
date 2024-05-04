@@ -98,6 +98,21 @@ namespace toyjson::data {
     template <typename T>
     constexpr int native_to_vidx = 0;
 
+    template <>
+    static constexpr int native_to_vidx<BooleanField> = 1;
+
+    template <>
+    static constexpr int native_to_vidx<NumberField> = 2;
+
+    template <>
+    static constexpr int native_to_vidx<StringField> = 3;
+
+    template <>
+    static constexpr int native_to_vidx<ArrayField> = 4;
+
+    template <>
+    static constexpr int native_to_vidx<ObjectField> = 5;
+
     /* AnyField (wraps any JSON type)*/
 
     class AnyField : public IJsonValue {

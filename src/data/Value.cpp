@@ -120,23 +120,6 @@ namespace toyjson::data {
         return value.at(key);
     }
 
-    /* Type Utils */
-
-    template <>
-    constexpr int native_to_vidx<BooleanField> = 1;
-
-    template <>
-    constexpr int native_to_vidx<NumberField> = 2;
-
-    template <>
-    constexpr int native_to_vidx<StringField> = 3;
-
-    template <>
-    constexpr int native_to_vidx<ArrayField> = 4;
-
-    template <>
-    constexpr int native_to_vidx<ObjectField> = 5;
-
     /* AnyField */
     AnyField::AnyField(NullField x_null)
         : value(std::move(x_null)) {}
