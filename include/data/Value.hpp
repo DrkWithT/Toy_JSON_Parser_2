@@ -96,7 +96,7 @@ namespace toyjson::data {
 
     // Base case: all unsupported native types default to 0 as null.
     template <typename T>
-    constexpr int native_to_vidx = 0;
+    static constexpr int native_to_vidx = 0;
 
     template <>
     static constexpr int native_to_vidx<BooleanField> = 1;
