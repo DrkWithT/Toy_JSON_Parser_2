@@ -100,17 +100,13 @@ namespace toyjson::data {
     constexpr int toAnyVariantPos() {
         if constexpr (std::is_same_v<T, BooleanField>)
             return 1;
-
-        if constexpr (std::is_same_v<T, NumberField>)
+        else if constexpr (std::is_same_v<T, NumberField>)
             return 2;
-
-        if constexpr (std::is_same_v<T, StringField>)
+        else if constexpr (std::is_same_v<T, StringField>)
             return 3;
-
-        if constexpr (std::is_same_v<T, ArrayField>)
+        else if constexpr (std::is_same_v<T, ArrayField>)
             return 4;
-
-        if constexpr (std::is_same_v<T, ObjectField>)
+        else if constexpr (std::is_same_v<T, ObjectField>)
             return 5;
 
         return 0;
