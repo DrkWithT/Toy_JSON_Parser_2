@@ -8,6 +8,7 @@
  * 
  */
 
+#include <iostream>
 #include "frontend/Lexer.hpp"
 #include "frontend/Token.hpp"
 
@@ -27,8 +28,7 @@ namespace toyjson::frontend {
 
         char peeked = peekSymbol();
 
-        if (isSpacing(peeked))
-            return lexWhitespace();
+        std::cout << "peeked: " << peeked << '\n'; // debug cout
 
         switch (peeked) {
             case '{':
@@ -49,7 +49,9 @@ namespace toyjson::frontend {
                 break;
         }
 
-        if (isNumeric(peeked))
+        if (isSpacing(peeked))
+            return lexWhitespace(); 
+        else if (isNumeric(peeked))
             return lexNumber();
         else if (isWordSymbol(peeked))
             return lexKeyword();
@@ -69,14 +71,6 @@ namespace toyjson::frontend {
         return symbols.at(pos);
     }
 
-    char Lexer::consumeSymbol() {
-        char temp = peekSymbol();
-
-        pos++;
-
-        return temp;
-    }
-
     Token Lexer::lexSingle(TokenType type) {
         size_t begin = pos;
 
@@ -86,27 +80,31 @@ namespace toyjson::frontend {
     }
 
     Token Lexer::lexBetween(char delim, TokenType type) {
-        size_t begin = ++pos;
+        pos++;
+
+        size_t begin = pos;
         size_t length = 0;
         char c;
         bool closed = false; // has right-side delim
 
         while (!isAtEnd()) {
-            c = consumeSymbol();
+            c = peekSymbol();
 
             if (c == delim) {
+                std::cout << "end between\n";
                 closed = true;
-                c = consumeSymbol();
+                pos++;
                 break;
             }
 
             length++;
+            pos++;
         }
 
         return {
             .begin = begin,
             .length = length,
-            .type = (closed) ? type : TokenType::unknown
+            .type = ((closed) ? type : TokenType::unknown)
         };
     }
 
@@ -116,7 +114,7 @@ namespace toyjson::frontend {
         char c;
 
         while (!isAtEnd()) {
-            c = consumeSymbol();
+            c = peekSymbol();
 
             if (!isSpacing(c))
                 break;
@@ -125,23 +123,25 @@ namespace toyjson::frontend {
                 line++;
 
             length++;
+            pos++;
         }
 
         return {.begin = begin, .length = length, .type = TokenType::whitespace};
     }
 
     Token Lexer::lexKeyword() {
-        size_t begin = 0;
+        size_t begin = pos;
         size_t length = 0;
         char c;
 
         while (!isAtEnd()) {
-            c = consumeSymbol();
+            c = peekSymbol();
 
             if (!isWordSymbol(c))
                 break;
 
             length++;
+            pos++;
         }
 
         Token result = {.begin = begin, .length = length, .type = TokenType::unknown};
@@ -156,13 +156,13 @@ namespace toyjson::frontend {
     }
 
     Token Lexer::lexNumber() {
-        size_t begin = 0;
+        size_t begin = pos;
         size_t length = 0;
         int dots = 0;
         char c;
 
         while (!isAtEnd()) {
-            c = consumeSymbol();
+            c = peekSymbol();
 
             if (!isNumeric(c))
                 break;
@@ -171,6 +171,7 @@ namespace toyjson::frontend {
                 dots++;
 
             length++;
+            pos++;
         }
 
         switch (dots) {

@@ -35,10 +35,10 @@ namespace toyjson::frontend {
             [[nodiscard]] bool matchToken(const Token& token, std::initializer_list<TokenType> types);
             void consumeToken(std::initializer_list<TokenType> types);
 
-            std::unique_ptr<JsonValue> parseValue();
+            std::shared_ptr<JsonValue> parseValue();
 
-            std::unique_ptr<JsonValue> parseArray();
-            std::unique_ptr<JsonValue> parseObject();
+            std::shared_ptr<JsonValue> parseArray();
+            std::shared_ptr<JsonValue> parseObject();
     };
 }
 

@@ -76,8 +76,11 @@ namespace toyjson::frontend {
         do {
             temp = lexer.lexNext();
 
+            std::cout << "doAdvance: temp.begin " << temp.begin << '\n'; // debug cout
+
             if (temp.type == TokenType::unknown) {
                 logErrorBy(temp, ParseStatus::err_unknown_token, "Unknown token!\n");
+                std::cout << "bad type: " << static_cast<int>(temp.type) << "bad lexeme: " << getLexeme(temp, symbols) << '\n'; // debug cout
                 continue;
             }
 
@@ -91,9 +94,6 @@ namespace toyjson::frontend {
     }
 
     bool Parser::matchToken(const Token& token, std::initializer_list<TokenType> types) {
-        if (token.type == TokenType::eof)
-            return false;
-
         return matchTokenImpl(token, types);
     }
 
@@ -101,36 +101,36 @@ namespace toyjson::frontend {
         if (isAtEOF())
             return;
 
-        Token temp = doAdvance();
-
-        if (matchToken(temp, types)) {
+        if (matchToken(current, types)) {
             previous = current;
-            current = temp;
+            current = doAdvance();
             return;
         }
 
-        throw std::runtime_error {createErrorMsg(temp, ParseStatus::err_misplaced_token, "Unexpected token!\n")};
+        throw std::runtime_error {createErrorMsg(current, ParseStatus::err_misplaced_token, "Unexpected token!\n")};
     }
 
-    std::unique_ptr<JsonValue> Parser::parseValue() {
+    std::shared_ptr<JsonValue> Parser::parseValue() {
+        std::cout << "Value\n"; // debug cout
+
         TokenType peeked_type = peekCurrent().type;
 
         if (peeked_type == TokenType::lt_null) {
-            auto x_null = std::make_unique<JsonAny>(JsonNull());
+            auto x_null = std::make_shared<JsonAny>(JsonNull());
             consumeToken({});
             return x_null;
         } else if (peeked_type == TokenType::lt_true || peeked_type == TokenType::lt_false) {
-            auto x_bool = std::make_unique<JsonAny>(JsonBoolean(peeked_type == TokenType::lt_true));
+            auto x_bool = std::make_shared<JsonAny>(JsonBoolean(peeked_type == TokenType::lt_true));
             consumeToken({});
             return x_bool;
         } else if (peeked_type == TokenType::lt_number) {
             auto lexeme = getLexeme(peekCurrent(), symbols);
             consumeToken({});
-            return std::make_unique<JsonAny>(JsonNumber(std::stod(lexeme)));
+            return std::make_shared<JsonAny>(JsonNumber(std::stod(lexeme)));
         } else if (peeked_type == TokenType::lt_strbody) {
             auto lexeme = getLexeme(peekCurrent(), symbols);
             consumeToken({});
-            return std::make_unique<JsonAny>(JsonString(std::move(lexeme)));
+            return std::make_shared<JsonAny>(JsonString(std::move(lexeme)));
         } else if (peeked_type == TokenType::lbrack) {
             return parseArray();
         } else if (peeked_type == TokenType::lbrace) {
@@ -140,10 +140,12 @@ namespace toyjson::frontend {
         }
     }
 
-    std::unique_ptr<JsonValue> Parser::parseArray() {
+    std::shared_ptr<JsonValue> Parser::parseArray() {
+        std::cout << "Array\n"; // debug cout
+
         consumeToken({}); // pass '[' symbol
 
-        std::vector<std::unique_ptr<JsonValue>> x_items {};
+        std::vector<std::shared_ptr<JsonValue>> x_items {};
 
         while (!isAtEOF()) {
             if (matchToken(peekCurrent(), {TokenType::rbrack})) {
@@ -163,21 +165,31 @@ namespace toyjson::frontend {
             }
         }
 
-        return std::make_unique<JsonAny>(JsonArray(std::move(x_items)));
+        return std::make_shared<JsonAny>(JsonArray(std::move(x_items)));
     }
 
-    std::unique_ptr<JsonValue> Parser::parseObject() {
+    std::shared_ptr<JsonValue> Parser::parseObject() {
+        std::cout << "Object\n"; // debug cout
+
         consumeToken({}); // pass '{' symbol
 
-        std::map<std::string, std::unique_ptr<JsonValue>> x_dict {};
+        std::cout << "current.type: " << static_cast<int>(peekCurrent().type) << '\n';
+
+        std::map<std::string, std::shared_ptr<JsonValue>> x_dict {};
 
         while (!isAtEOF()) {
             if (matchToken(peekCurrent(), {TokenType::rbrace})) {
+                std::cout << "end Object\n";
                 consumeToken({});
                 break;
             }
 
             auto x_name = getLexeme(peekCurrent(), symbols);
+
+            consumeToken({TokenType::lt_strbody});
+
+            // debug cout!
+            std::cout << "found " << x_name << '\n';
 
             consumeToken({TokenType::colon});
 
@@ -194,6 +206,6 @@ namespace toyjson::frontend {
             }
         }
 
-        return std::make_unique<JsonAny>(JsonObject(std::move(x_dict)));
+        return std::make_shared<JsonAny>(JsonObject(std::move(x_dict)));
     }
 }

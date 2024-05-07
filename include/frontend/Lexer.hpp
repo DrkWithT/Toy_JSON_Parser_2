@@ -12,7 +12,7 @@ namespace toyjson::frontend {
     }
 
     [[nodiscard]] constexpr bool isWordSymbol(char c) {
-        return (c >= 'A' && c <= 'Z') || (c >= 'a' || c <= 'z') || c == '_';
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_';
     }
 
     [[nodiscard]] constexpr bool isNumeric(char c) {
@@ -35,7 +35,6 @@ namespace toyjson::frontend {
 
             [[nodiscard]] bool isAtEnd() const;
             [[nodiscard]] char peekSymbol() const;
-            [[nodiscard]] char consumeSymbol();
             Token lexSingle(TokenType type);
             Token lexBetween(char delim, TokenType type);
             Token lexWhitespace();
