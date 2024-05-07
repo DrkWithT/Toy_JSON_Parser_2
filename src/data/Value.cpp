@@ -65,7 +65,7 @@ namespace toyjson::data {
     ArrayField::ArrayField()
         : value {} {}
 
-    ArrayField::ArrayField(std::vector<std::unique_ptr<IJsonValue>> x_items)
+    ArrayField::ArrayField(std::vector<std::shared_ptr<IJsonValue>> x_items)
         : value(std::move(x_items)) {}
 
     JsonType ArrayField::getType() const {
@@ -84,7 +84,7 @@ namespace toyjson::data {
         return value.size();
     }
 
-    const std::unique_ptr<IJsonValue>& ArrayField::getItemPtr(size_t pos) const {
+    const std::shared_ptr<IJsonValue>& ArrayField::getItemPtr(size_t pos) const {
         return value.at(pos);
     }
 
@@ -93,7 +93,7 @@ namespace toyjson::data {
     ObjectField::ObjectField()
         : value {} {}
 
-    ObjectField::ObjectField(std::map<std::string, std::unique_ptr<IJsonValue>> x_map)
+    ObjectField::ObjectField(std::map<std::string, std::shared_ptr<IJsonValue>> x_map)
         : value(std::move(x_map)) {}
 
     JsonType ObjectField::getType() const {
@@ -116,7 +116,7 @@ namespace toyjson::data {
         return value.find(key) != value.end();
     }
 
-    const std::unique_ptr<IJsonValue>& ObjectField::getValuePtr(const std::string& key) const {
+    const std::shared_ptr<IJsonValue>& ObjectField::getValuePtr(const std::string& key) const {
         return value.at(key);
     }
 
@@ -146,19 +146,19 @@ namespace toyjson::data {
 
     std::any AnyField::toBoxedValue() const
     {
-        throw std::runtime_error {"Not implemented"};
+        return std::any {*this};
     }
 
     /* ToyJsonDocument */
 
-    ToyJsonDocument::ToyJsonDocument(const std::string& name_str, std::unique_ptr<IJsonValue> x_root_ptr)
+    ToyJsonDocument::ToyJsonDocument(const std::string& name_str, std::shared_ptr<IJsonValue> x_root_ptr)
         : title {name_str}, root_ptr(std::move(x_root_ptr)) {}
 
     std::string_view ToyJsonDocument::getTitle() const {
         return title;
     }
 
-    const std::unique_ptr<IJsonValue>& ToyJsonDocument::getRoot() const {
+    const std::shared_ptr<IJsonValue>& ToyJsonDocument::getRoot() const {
         return root_ptr;
     }
 }

@@ -61,7 +61,7 @@ namespace toyjson::data {
     class ArrayField : public IJsonValue {
         public:
             ArrayField();
-            ArrayField(std::vector<std::unique_ptr<IJsonValue>> x_items);
+            ArrayField(std::vector<std::shared_ptr<IJsonValue>> x_items);
 
             [[nodiscard]] JsonType getType() const override;
             [[nodiscard]] std::any toBoxedValue() const override;
@@ -69,16 +69,16 @@ namespace toyjson::data {
             [[nodiscard]] bool isEmpty() const;
             [[nodiscard]] size_t getLength() const;
 
-            [[nodiscard]] const std::unique_ptr<IJsonValue>& getItemPtr(size_t pos) const;
+            [[nodiscard]] const std::shared_ptr<IJsonValue>& getItemPtr(size_t pos) const;
 
         private:
-            std::vector<std::unique_ptr<IJsonValue>> value;
+            std::vector<std::shared_ptr<IJsonValue>> value;
     };
 
     class ObjectField : public IJsonValue {
         public:
             ObjectField();
-            ObjectField(std::map<std::string, std::unique_ptr<IJsonValue>> x_map);
+            ObjectField(std::map<std::string, std::shared_ptr<IJsonValue>> x_map);
 
             [[nodiscard]] JsonType getType() const override;
             [[nodiscard]] std::any toBoxedValue() const override;
@@ -87,10 +87,10 @@ namespace toyjson::data {
             [[nodiscard]] size_t getPropertyCount() const;
 
             [[nodiscard]] bool hasProperty(const std::string& key) const;
-            [[nodiscard]] const std::unique_ptr<IJsonValue>& getValuePtr(const std::string& key) const;
+            [[nodiscard]] const std::shared_ptr<IJsonValue>& getValuePtr(const std::string& key) const;
 
         private:
-            std::map<std::string, std::unique_ptr<IJsonValue>> value;
+            std::map<std::string, std::shared_ptr<IJsonValue>> value;
     };
 
     /* Type Utility */
@@ -141,16 +141,16 @@ namespace toyjson::data {
     class ToyJsonDocument {
         public:
             ToyJsonDocument();
-            ToyJsonDocument(const std::string& name_str, std::unique_ptr<IJsonValue> x_root_ptr);
+            ToyJsonDocument(const std::string& name_str, std::shared_ptr<IJsonValue> x_root_ptr);
 
             [[nodiscard]] std::string_view getTitle() const;
-            [[nodiscard]] const std::unique_ptr<IJsonValue>& getRoot() const;
+            [[nodiscard]] const std::shared_ptr<IJsonValue>& getRoot() const;
 
         private:
             std::string title;
 
             /// @warning Only store AnyField objects or else there's no guarantee of the IJsonValue having a desired value within.
-            std::unique_ptr<IJsonValue> root_ptr;
+            std::shared_ptr<IJsonValue> root_ptr;
     };
 }
 
