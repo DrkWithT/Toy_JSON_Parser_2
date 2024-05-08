@@ -15,7 +15,7 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - name: Setup Build
-              run: cmake -S . -DDEBUG_MODE=0
+              run: cmake -S . -DDEBUG_MODE:BOOL=0
             - name: Build Code
               run: make -j 2 all
             - name: Sample Test

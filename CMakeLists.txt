@@ -7,9 +7,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-set(DEBUG_MODE TRUE)
+set(DEBUG_MODE TRUE CACHE BOOL "Build with debug symbols")
 
-if (DEBUG_MODE)
+if(${DEBUG_MODE})
     add_compile_options(-Wall -Wextra -Wpedantic -Werror -g -O0)
 else()
     add_compile_options(-Wall -Wextra -Wpedantic -Werror -O2)
