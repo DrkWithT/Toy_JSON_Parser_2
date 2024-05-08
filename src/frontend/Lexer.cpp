@@ -8,7 +8,6 @@
  * 
  */
 
-#include <iostream>
 #include "frontend/Lexer.hpp"
 #include "frontend/Token.hpp"
 
@@ -27,8 +26,6 @@ namespace toyjson::frontend {
             return {.begin = limit, .length = 1, .type = TokenType::eof};
 
         char peeked = peekSymbol();
-
-        std::cout << "peeked: " << peeked << '\n'; // debug cout
 
         switch (peeked) {
             case '{':
@@ -91,7 +88,6 @@ namespace toyjson::frontend {
             c = peekSymbol();
 
             if (c == delim) {
-                std::cout << "end between\n";
                 closed = true;
                 pos++;
                 break;

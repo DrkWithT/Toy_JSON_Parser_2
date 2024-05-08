@@ -76,11 +76,8 @@ namespace toyjson::frontend {
         do {
             temp = lexer.lexNext();
 
-            std::cout << "doAdvance: temp.begin " << temp.begin << '\n'; // debug cout
-
             if (temp.type == TokenType::unknown) {
                 logErrorBy(temp, ParseStatus::err_unknown_token, "Unknown token!\n");
-                std::cout << "bad type: " << static_cast<int>(temp.type) << "bad lexeme: " << getLexeme(temp, symbols) << '\n'; // debug cout
                 continue;
             }
 
@@ -111,8 +108,6 @@ namespace toyjson::frontend {
     }
 
     std::shared_ptr<JsonValue> Parser::parseValue() {
-        std::cout << "Value\n"; // debug cout
-
         TokenType peeked_type = peekCurrent().type;
 
         if (peeked_type == TokenType::lt_null) {
@@ -141,8 +136,6 @@ namespace toyjson::frontend {
     }
 
     std::shared_ptr<JsonValue> Parser::parseArray() {
-        std::cout << "Array\n"; // debug cout
-
         consumeToken({}); // pass '[' symbol
 
         std::vector<std::shared_ptr<JsonValue>> x_items {};
@@ -169,17 +162,12 @@ namespace toyjson::frontend {
     }
 
     std::shared_ptr<JsonValue> Parser::parseObject() {
-        std::cout << "Object\n"; // debug cout
-
         consumeToken({}); // pass '{' symbol
-
-        std::cout << "current.type: " << static_cast<int>(peekCurrent().type) << '\n';
 
         std::map<std::string, std::shared_ptr<JsonValue>> x_dict {};
 
         while (!isAtEOF()) {
             if (matchToken(peekCurrent(), {TokenType::rbrace})) {
-                std::cout << "end Object\n";
                 consumeToken({});
                 break;
             }
@@ -187,9 +175,6 @@ namespace toyjson::frontend {
             auto x_name = getLexeme(peekCurrent(), symbols);
 
             consumeToken({TokenType::lt_strbody});
-
-            // debug cout!
-            std::cout << "found " << x_name << '\n';
 
             consumeToken({TokenType::colon});
 
