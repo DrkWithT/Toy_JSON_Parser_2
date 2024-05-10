@@ -2,10 +2,9 @@
 #define FILEUTILS_HPP
 
 #include <string>
-#include <string_view>
 
 namespace toyjson::utils {
-    [[nodiscard]] std::string readFile(std::string_view file_path_sv);
+    [[nodiscard]] std::string readFile(const std::string& file_path_str);
 }
 
 #endif

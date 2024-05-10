@@ -11,10 +11,11 @@
 #include <algorithm>
 #include <memory>
 #include <fstream>
+#include "utils/FileUtils.hpp"
 
 namespace toyjson::utils {
-    [[nodiscard]] std::string readFile(std::string_view file_path_sv) {
-        std::ifstream reader {file_path_sv};
+    [[nodiscard]] std::string readFile(const std::string& file_path_str) {
+        std::ifstream reader {file_path_str};
 
         reader.seekg(0, reader.end);
         size_t length = reader.tellg();
