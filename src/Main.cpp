@@ -10,16 +10,11 @@
 
 #include <any>
 #include <iostream>
-// #include "frontend/Token.hpp"
 #include "utils/FileUtils.hpp"
-// #include "frontend/Lexer.hpp"
 #include "data/Value.hpp"
 #include "frontend/Parser.hpp"
 
 int main() {
-    // using MyLexer = toyjson::frontend::Lexer;
-    // using MyToken = toyjson::frontend::Token;
-    // using MyTokenType = toyjson::frontend::TokenType;
     using MyJsonAny = toyjson::data::AnyField;
     using MyJsonObj = toyjson::data::ObjectField;
     using MyParser = toyjson::frontend::Parser;
@@ -27,18 +22,6 @@ int main() {
     const char* name = "./tests/test_flat.json";
     
     auto flat_content = toyjson::utils::readFile(name);
-
-    std::cout << "flat_content:\n" << flat_content << '\n'; // debug cout
-
-    // MyLexer lexer {flat_content};
-
-    // MyToken temp;
-
-    // do {
-    //     temp = lexer.lexNext();
-
-    //     std::cout << "beg = " << temp.begin << ", len = " << temp.length << ", type = " << static_cast<int>(temp.type) << '\n';
-    // }while (temp.type != MyTokenType::eof);
 
     MyParser parser {flat_content};
 
