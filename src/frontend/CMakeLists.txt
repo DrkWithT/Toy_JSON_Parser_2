@@ -1,4 +1,4 @@
 add_library(frontend "")
 
-# TODO: add PRIVATE ToyJsonParser.cpp to sources!
-target_sources(frontend PRIVATE ToyJsonToken.cpp PRIVATE ToyJsonLexer.cpp)
+# TODO: add PRIVATE Parser.cpp to sources!
+target_sources(frontend PRIVATE Token.cpp PRIVATE Lexer.cpp PRIVATE Parser.cpp)

@@ -16,9 +16,9 @@ namespace toyjson::utils {
     [[nodiscard]] std::string readFile(std::string_view file_path_sv) {
         std::ifstream reader {file_path_sv};
 
-        reader.seekg(std::ios::end);
+        reader.seekg(0, reader.end);
         size_t length = reader.tellg();
-        reader.seekg(std::ios::beg);
+        reader.seekg(0, reader.beg);
 
         auto buffer = std::make_unique<char[]>(length + 1);
         std::fill(buffer.get(), buffer.get() + length, '\0');
